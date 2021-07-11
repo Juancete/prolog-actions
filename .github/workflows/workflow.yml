@@ -22,8 +22,6 @@ jobs:
           if [[ "$CACHE_HIT" == 'true' ]]; then
             echo "Datos restaurados!"
             sudo cp --verbose --force --recursive ~/prolog/* /
-            sudo dpkg --configure swi-prolog-nox
-            ls /usr/lib/swi-prolog/library/plunit.pl
           else
             sudo apt-add-repository ppa:swi-prolog/devel -y
             sudo apt-get update -q
@@ -44,4 +42,4 @@ jobs:
           fi
           swipl --version
           echo "a procesar los archivos..."
-          find *.pl | xargs -I{} swipl -s {} -g run_tests,halt -t 'halt(1)'
+          find *.pl | xargs -I{} swipl -s {} /usr/lib/swi-prolog/library/plunit.pl -g run_tests,halt -t 'halt(1)'
