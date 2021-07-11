@@ -1,0 +1,40 @@
+name: Build
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Prolog
+        uses: actions/cache@v2
+        id: cache-prolog
+        with:
+          path: "~/prolog"
+          key: cache-packages
+      - name: Prolog download
+        env:
+          CACHE_HIT: ${{steps.cache-prolog.outputs.cache-hit}}
+        run: | 
+          echo "el valor es $CACHE_HIT"
+          if [[ "$CACHE_HIT" == 'true' ]]; then
+            echo "Datos restaurados!"
+            sudo cp --verbose --force --recursive ~/prolog/* /
+          else
+            sudo apt-add-repository ppa:swi-prolog/devel -y
+            sudo apt-get update -q
+            sudo apt-get install swi-prolog-nox
+            mkdir -p ~/prolog
+            sudo dpkg -L swi-prolog-nox | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/prolog/
+            echo "Datos copiados!"
+            ls -la ~/.prolog
+          fi
+      - name: Run tests
+        run: | 
+          if [ 0 == `find *.pl | wc -l` ] ; then
+            echo "No hay archivos Prolog en tu solución"
+            exit 1
+          fi
+          find *.pl | xargs -I{} swipl -s {} -g run_tests,halt -t 'halt(1)'
