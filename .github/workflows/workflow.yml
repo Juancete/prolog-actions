@@ -13,7 +13,7 @@ jobs:
         id: cache-prolog
         with:
           path: "~/prolog"
-          key: cache-prolog-packages
+          key: cache-pl-packages
       - name: Prolog download
         env:
           CACHE_HIT: ${{steps.cache-prolog.outputs.cache-hit}}
@@ -28,6 +28,9 @@ jobs:
             sudo apt-get install swi-prolog-nox
             mkdir -p ~/prolog
             sudo dpkg -L swi-prolog-nox | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/prolog/
+            sudo dpkg -L libbsd-dev | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/prolog/
+            sudo dpkg -L libedit-dev | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/prolog/
+            sudo dpkg -L libossp-uuid16 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/prolog/
             echo "Datos copiados!"
             dpkg -L swi-prolog-nox | grep plunit
           fi
