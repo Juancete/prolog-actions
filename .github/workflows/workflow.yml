@@ -21,7 +21,8 @@ jobs:
           echo "el valor es $CACHE_HIT"
           if [[ "$CACHE_HIT" == 'true' ]]; then
             echo "Datos restaurados!"
-            sudo cp --verbose --force --recursive ~/prolog/* /
+            sudo cp --force --recursive ~/prolog/* /
+            ls /usr/lib/swi-prolog/library/plunit.pl
           else
             sudo apt-add-repository ppa:swi-prolog/devel -y
             sudo apt-get update -q
